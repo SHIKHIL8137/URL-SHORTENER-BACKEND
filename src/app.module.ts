@@ -3,6 +3,7 @@ import { AuthModule } from './modules/auth.module';
 import { UrlModule } from './modules/url.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { mongooseConfig } from './config/mongoose.config';
+import { AppController } from './app.controller'; 
 
 @Module({
   imports: [
@@ -10,5 +11,6 @@ import { mongooseConfig } from './config/mongoose.config';
     AuthModule,
     UrlModule,
   ],
+  controllers: [AppController], 
 })
 export class AppModule {}
