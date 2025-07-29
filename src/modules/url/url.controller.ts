@@ -6,7 +6,8 @@ import {
   Param,
   UseGuards,
   Request,
-  Response
+  Response,
+  Query
 } from '@nestjs/common';
 import { CreateUrlUseCase } from '../../application/use-cases/url/create-url.use-case';
 import { GetUrlUseCase } from '../../application/use-cases/url/get-url.use-case';
@@ -33,8 +34,9 @@ export class UrlController {
 
   @Get()
   @UseGuards(AuthGuard)
-  async getUrlsByUserId(@Request() req:any){
-    return this.getUrlsUsecase.execute(req.user.userId);
+  async getUrlsByUserId(@Request() req:any,@Query('skip') skip = 0,
+  @Query('limit') limit = 10,){
+    return this.getUrlsUsecase.execute(req.user.userId,skip,limit);
   }
 
   @Post()

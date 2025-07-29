@@ -15,8 +15,8 @@ export class GetUrlsUseCase {
     private urlRepository: UrlRepository,
   ) {}
 
-  async execute(userId: string): Promise<UrlResponseDto[] | null> {
-    const urls = await this.urlRepository.findByUserId(userId);
+  async execute(userId: string,skip:number,limit:number): Promise<UrlResponseDto[] | null> {
+    const urls = await this.urlRepository.findByUserId(userId,skip,limit);
     if (!urls) {
       return null;
     }
