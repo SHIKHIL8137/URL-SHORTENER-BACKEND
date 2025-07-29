@@ -18,8 +18,7 @@ export class CreateUrlUseCase {
     dto: CreateUrlDto,
     userId: string,
   ): Promise<UrlResponseDto> {
-      const { nanoid } = await import('nanoid'); 
-    const shortCode = nanoid(6);
+    const shortCode = Date.now().toString(36).slice(-6);
     const url = new IUrl(
       Math.random().toString(36).substring(2),
       dto.originalUrl,
