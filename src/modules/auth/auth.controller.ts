@@ -22,14 +22,16 @@ export class AuthController {
     private readonly registerUseCase: RegisterUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly refreshUseCase: RefreshUseCase,
-    private readonly getUserUseCase : GetUserUseCase
+    private readonly getUserUseCase: GetUserUseCase,
   ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() dto: RegisterUserDto,@Response() res:any) {
-    await this.registerUseCase.execute(dto)
-    return res.status(200).json({message:"User created successfull",status:true});
+  async register(@Body() dto: RegisterUserDto, @Response() res: any) {
+    await this.registerUseCase.execute(dto);
+    return res
+      .status(200)
+      .json({ message: 'User created successfull', status: true });
   }
 
   @Post('login')
@@ -38,26 +40,31 @@ export class AuthController {
     const tokens = await this.loginUseCase.execute(dto);
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: 'none',
       maxAge: 1000 * 60 * 15,
     });
     res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
-    return res.status(200).json({status:true, message: 'Login successful' });
+
+    return res.status(200).json({ status: true, message: 'Login successful' });
   }
 
   @Post('refresh')
   @UseGuards(VerifyRefresh)
   async accessToken(@Request() req: any, @Response() res: any) {
-    const {accessToken} = await this.refreshUseCase.execute(req.user.email);
+    const { accessToken } = await this.refreshUseCase.execute(req.user.email);
     res.cookie('access_token', accessToken, {
       httpOnly: true,
-      secure: false,
+      secure: true,
+      sameSite: 'none',
       maxAge: 1000 * 60 * 15,
     });
+
     return res.status(200).json({ message: 'Token refreshed' });
   }
 
@@ -69,17 +76,20 @@ export class AuthController {
   }
 
   @Get('logout')
-  async logout(@Response() res:any){
+  async logout(@Response() res: any) {
     res.clearCookie('access_token', {
       httpOnly: true,
-      secure: false,
-      path: '/', 
+      secure: true,
+      sameSite: 'none',
+      path: '/',
     });
     res.clearCookie('refresh_token', {
       httpOnly: true,
-      secure: false,
-      path: '/', 
+      secure: true,
+      sameSite: 'none',
+      path: '/',
     });
+
     return res.status(200).json({ status: true, message: 'Logout successful' });
   }
 }
