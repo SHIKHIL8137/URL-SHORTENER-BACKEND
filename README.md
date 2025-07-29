@@ -1,6 +1,5 @@
-# 🧠 OCR Backend (Express + Tesseract.js)
-
-This is a Node.js (Express) backend that performs OCR (Optical Character Recognition) on Aadhaar card images using `tesseract.js`. It supports extracting name, DOB, gender, Aadhaar number, address, and mobile number from front and back images.
+# 🧠URL Shortener Backend (NestJS + Clean Architecture)
+A scalable and modular backend service for shortening URLs, built using NestJS, TypeScript, and Clean Architecture principles. Supports URL creation, redirection, analytics, and expiration handling.
 
 ---
 
