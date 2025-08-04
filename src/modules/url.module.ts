@@ -6,6 +6,7 @@ import { UrlRepositoryImpl } from 'src/infrastructure/repositories/url.repositor
 import { MongooseModule } from '@nestjs/mongoose';
 import { UrlSchema } from 'src/infrastructure/dataBase/schemas/url.schema';
 import { GetUrlsUseCase } from 'src/application/use-cases/url/get-urls-userId.usecases';
+import { TimestampShortCodeGenerator } from 'src/infrastructure/utils/timestamp-shortcode-generator';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Url', schema: UrlSchema }])],
@@ -15,6 +16,7 @@ import { GetUrlsUseCase } from 'src/application/use-cases/url/get-urls-userId.us
     GetUrlUseCase,
     GetUrlsUseCase,
     { provide: 'UrlRepository', useClass: UrlRepositoryImpl },
+     { provide: 'ShortCodeGenerator', useClass: TimestampShortCodeGenerator },
   ],
    exports: ['UrlRepository'],
 })
