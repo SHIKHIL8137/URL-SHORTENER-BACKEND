@@ -37,7 +37,7 @@ export class UrlRepositoryImpl {
   }
 
   async findByUserId(userId: string,skip:number,limit:number): Promise<IUrl[]> {
-    const urls = await this.urlModel.find({ userId }).skip(skip).limit(limit).exec();
+    const urls = await this.urlModel.find({ userId }).sort({createdAt : -1}).skip(skip).limit(limit).exec();
     return urls.map(
       (url) =>
         new IUrl(
