@@ -7,12 +7,12 @@ import { BadRequestException, Inject } from '@nestjs/common';
 
 export class LoginUseCase {
   constructor( @Inject('UserRepository') 
-  private userRepository: UserRepository) {}
+  private _userRepository: UserRepository) {}
 
   async execute(
     dto: RegisterUserDto,
   ): Promise<{ refreshToken: string; accessToken: string }> {
-    const user = await this.userRepository.findByEmail(dto.email);
+    const user = await this._userRepository.findByEmail(dto.email);
     if (!user) {
       throw new BadRequestException('Invalid credentials');
     }
@@ -21,12 +21,12 @@ export class LoginUseCase {
       throw new BadRequestException('Invalid credentials');
     }
     const accessToken = jwt.sign(
-      { userId: user._id,email:user?.email },
+      { userId: user._id,email:user?.email ,role:user?.role},
       accessTokenConfig.secret,
       accessTokenConfig.signOptions,
     );
     const refreshToken = jwt.sign(
-      { userId: user._id,email:user?.email },
+      { userId: user._id,email:user?.email,role:user?.role },
       refreshTokenConfig.secret,
       refreshTokenConfig.signOptions,
     );

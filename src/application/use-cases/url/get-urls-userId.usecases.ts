@@ -1,22 +1,15 @@
 import { Inject } from '@nestjs/common';
 import { UrlRepository } from '../../../domain/repositories/url.repository';
-import { IUrl } from 'src/domain/entities/url.entitiy';
-
-export interface UrlResponseDto {
-  id: string;
-  originalUrl: string;
-  shortUrl: string;
-  createdAt: Date;
-}
+import { UrlResponseDto } from 'src/domain/types/url.type';
 
 export class GetUrlsUseCase {
   constructor(
     @Inject('UrlRepository')
-    private urlRepository: UrlRepository,
+    private _urlRepository: UrlRepository,
   ) {}
 
   async execute(userId: string,skip:number,limit:number): Promise<UrlResponseDto[] | null> {
-    const urls = await this.urlRepository.findByUserId(userId,skip,limit);
+    const urls = await this._urlRepository.findByUserId(userId,skip,limit);
     if (!urls) {
       return null;
     }

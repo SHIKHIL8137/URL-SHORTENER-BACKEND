@@ -3,10 +3,10 @@ import { UrlRepository } from '../../../domain/repositories/url.repository';
 
 export class GetUrlUseCase {
   constructor(@Inject('UrlRepository')
-    private urlRepository: UrlRepository) {}
+    private _urlRepository: UrlRepository) {}
 
   async execute(shortCode: string): Promise<{ originalUrl: string } | null> {
-    const url = await this.urlRepository.findByShortCode(shortCode);
+    const url = await this._urlRepository.findByShortCode(shortCode);
     if (!url) {
       return null;
     }

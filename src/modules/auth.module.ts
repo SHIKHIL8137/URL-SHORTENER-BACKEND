@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from 'src/infrastructure/dataBase/schemas/user.schema';
 import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
 import { GetUserUseCase } from 'src/application/use-cases/auth/getUser.use-case';
+import { ChangePasswordUseCase } from 'src/application/use-cases/auth/changePassword.usecase';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
@@ -16,6 +17,7 @@ import { GetUserUseCase } from 'src/application/use-cases/auth/getUser.use-case'
     LoginUseCase,
     RefreshUseCase,
     GetUserUseCase, 
+    ChangePasswordUseCase,
     { provide: 'UserRepository', useClass: UserRepositoryImpl },
   ],
    exports: ['UserRepository'],

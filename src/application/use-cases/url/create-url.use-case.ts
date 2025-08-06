@@ -1,19 +1,15 @@
 import { UrlRepository } from '../../../domain/repositories/url.repository';
 import { CreateUrlDto } from 'src/application/dto/create-url.dto';
-import { IUrl } from 'src/domain/entities/url.entitiy';
 
 import { Inject } from '@nestjs/common';
 import { shortCodeGenerator } from 'src/domain/interfaces/generateUrl.interface';
-export interface UrlResponseDto {
-  id: string;
-  originalUrl: string;
-  shortUrl: string;
-  createdAt: Date;
-}
+import { UrlEntitiy } from 'src/domain/entities/url.entitiy';
+import { UrlResponseDto } from 'src/domain/types/url.type';
+
 
 export class CreateUrlUseCase {
   constructor(@Inject('UrlRepository')
-    private urlRepository: UrlRepository,
+    private _urlRepository: UrlRepository,
   @Inject('ShortCodeGenerator') private shortCodeGen: shortCodeGenerator
 ) {}
 
@@ -22,7 +18,7 @@ export class CreateUrlUseCase {
     userId: string,
   ): Promise<UrlResponseDto> {
     const shortCode = this.shortCodeGen.generate();
-    const url = new IUrl(
+    const url = new UrlEntitiy(
       Math.random().toString(36).substring(2),
       dto.originalUrl,
       shortCode,
@@ -30,7 +26,7 @@ export class CreateUrlUseCase {
       new Date(),
     );
 
-    const createdUrl = await this.urlRepository.create(url);
+    const createdUrl = await this._urlRepository.create(url);
     return { id: createdUrl._id,
       originalUrl: createdUrl.originalUrl,
       shortUrl: createdUrl.shortCode,

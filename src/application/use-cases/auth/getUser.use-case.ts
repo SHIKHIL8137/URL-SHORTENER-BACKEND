@@ -3,12 +3,12 @@ import { Inject, NotFoundException } from '@nestjs/common';
 
 export class GetUserUseCase {
   constructor( @Inject('UserRepository') 
-  private userRepository: UserRepository) {}
+  private _userRepository: UserRepository) {}
 
   async execute(
     email:string ,
   ): Promise<{email:string,name:string}|null> {
-    const user = await this.userRepository.findByEmail(email);   
+    const user = await this._userRepository.findByEmail(email);   
     if(!user){
       throw new NotFoundException('User not found')
     }

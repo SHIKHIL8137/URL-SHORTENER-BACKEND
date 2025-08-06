@@ -8,6 +8,7 @@ import {
   UseGuards,
   Response,
   Get,
+  Patch,
 } from '@nestjs/common';
 import { RegisterUseCase } from '../../application/use-cases/auth/register.use-case';
 import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
@@ -15,20 +16,25 @@ import { RegisterUserDto } from '../../application/dto/register-user.dto';
 import { AuthGuard, VerifyRefresh } from './auth.guard';
 import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
 import { GetUserUseCase } from 'src/application/use-cases/auth/getUser.use-case';
+import { ChangePasswordDto } from 'src/application/dto/password.dto';
+import { ChangePasswordUseCase } from 'src/application/use-cases/auth/changePassword.usecase';
+import { RolesGuard } from './role.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly registerUseCase: RegisterUseCase,
-    private readonly loginUseCase: LoginUseCase,
-    private readonly refreshUseCase: RefreshUseCase,
-    private readonly getUserUseCase: GetUserUseCase,
+    private readonly _registerUseCase: RegisterUseCase,
+    private readonly _loginUseCase: LoginUseCase,
+    private readonly _refreshUseCase: RefreshUseCase,
+    private readonly _getUserUseCase: GetUserUseCase,
+    private readonly _changePassword: ChangePasswordUseCase
   ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterUserDto, @Response() res: any) {
-    await this.registerUseCase.execute(dto);
+    await this._registerUseCase.execute(dto);
     return res
       .status(200)
       .json({ message: 'User created successfull', status: true });
@@ -37,7 +43,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() dto: RegisterUserDto, @Response() res: any) {
-    const tokens = await this.loginUseCase.execute(dto);
+    const tokens = await this._loginUseCase.execute(dto);
     res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       secure: true,
@@ -57,7 +63,7 @@ export class AuthController {
   @Post('refresh')
   @UseGuards(VerifyRefresh)
   async accessToken(@Request() req: any, @Response() res: any) {
-    const { accessToken } = await this.refreshUseCase.execute(req.user.email);
+    const { accessToken } = await this._refreshUseCase.execute(req.user.email);
     res.cookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
@@ -71,7 +77,7 @@ export class AuthController {
   @Get('user')
   @UseGuards(AuthGuard)
   async getUser(@Request() req: any, @Response() res: any) {
-    const user = await this.getUserUseCase.execute(req.user.email);
+    const user = await this._getUserUseCase.execute(req.user.email);
     return res.status(200).json(user);
   }
 
@@ -92,4 +98,15 @@ export class AuthController {
 
     return res.status(200).json({ status: true, message: 'Logout successful' });
   }
+
+  @Patch('resetpassword')
+  @UseGuards(AuthGuard,RolesGuard)
+  @Roles('user')
+  async resetPassword(@Body() dto:ChangePasswordDto,@Response() res:any,@Request() req: any){
+    console.log(dto)
+    console.log(req.user.email)
+    await this._changePassword.execute(dto,req.user.email)
+    return res.status(200).json({status:true,message:'Password Changed'});
+  }
 }
+

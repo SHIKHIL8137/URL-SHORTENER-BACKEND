@@ -1,4 +1,5 @@
-import { IUrl } from '../entities/url.entitiy';
+import { IUrl } from "../types/url.type";
+
 
 export interface UrlRepository {
   create(url: IUrl): Promise<IUrl>;
