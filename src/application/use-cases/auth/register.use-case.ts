@@ -3,8 +3,9 @@ import { RegisterUserDto } from 'src/application/dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ConflictException, Inject } from '@nestjs/common';
 import { UserEntity } from 'src/domain/entities/user.entity';
+import { IRegister } from 'src/domain/interfaces/auth/IRegister.interface';
 
-export class RegisterUseCase {
+export class RegisterUseCase implements IRegister{
   constructor(
     @Inject('UserRepository') 
     private readonly _userRepository: UserRepository

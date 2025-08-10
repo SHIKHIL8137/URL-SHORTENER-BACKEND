@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { accessTokenConfig, refreshTokenConfig } from '../../config/jwt.config';
+import { messages } from 'src/utils/statusMessage';
+import { statusCodes } from 'src/utils/statusCode';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,7 +16,7 @@ export class AuthGuard implements CanActivate {
     const token = request.cookies?.access_token;
 
     if (!token) {
-      throw new UnauthorizedException('No token provided');
+      throw new UnauthorizedException(messages.UNAUTHORIZED);
     }
 
     try {
@@ -22,7 +24,7 @@ export class AuthGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException(messages.UNAUTHORIZED);
     }
   }
 }
@@ -34,9 +36,9 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
     const token = request.cookies?.refresh_token;
 
     if (!token) {
-      response.status(401).json({
+      response.status(statusCodes.UNAUTHORIZED).json({
         status: false,
-        message: "No token provided",
+        message: messages.UNAUTHORIZED,
         tokenMissing:true
       });
       return false;
@@ -47,9 +49,9 @@ async canActivate(context: ExecutionContext): Promise<boolean> {
       request.user = payload;
       return true;
     } catch (error) {
-      response.status(500).json({
+      response.status(statusCodes.SERVER_ERROR).json({
         status: false,
-        message: "Invalid token",
+        message: messages.UNAUTHORIZED,
         invalidToken:true
       });
       return false;

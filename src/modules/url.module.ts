@@ -12,12 +12,12 @@ import { TimestampShortCodeGenerator } from 'src/infrastructure/utils/timestamp-
   imports: [MongooseModule.forFeature([{ name: 'Url', schema: UrlSchema }])],
   controllers: [UrlController],
   providers: [
-    CreateUrlUseCase,
-    GetUrlUseCase,
-    GetUrlsUseCase,
+    { provide: 'ICreate', useClass: CreateUrlUseCase },
+    { provide: 'IGeturl', useClass: GetUrlUseCase },
+    { provide: 'IGeturls', useClass: GetUrlsUseCase },
     { provide: 'UrlRepository', useClass: UrlRepositoryImpl },
-     { provide: 'ShortCodeGenerator', useClass: TimestampShortCodeGenerator },
+    { provide: 'ShortCodeGenerator', useClass: TimestampShortCodeGenerator },
   ],
-   exports: ['UrlRepository'],
+  exports: ['UrlRepository'],
 })
 export class UrlModule {}

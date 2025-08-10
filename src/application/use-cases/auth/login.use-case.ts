@@ -4,8 +4,9 @@ import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { accessTokenConfig, refreshTokenConfig } from 'src/config/jwt.config';
 import { BadRequestException, Inject } from '@nestjs/common';
+import { ILogin } from 'src/domain/interfaces/auth/ILogin.interface';
 
-export class LoginUseCase {
+export class LoginUseCase implements ILogin{
   constructor( @Inject('UserRepository') 
   private _userRepository: UserRepository) {}
 

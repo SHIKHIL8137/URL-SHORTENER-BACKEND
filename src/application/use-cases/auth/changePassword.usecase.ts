@@ -2,8 +2,10 @@ import { ChangePasswordDto } from 'src/application/dto/password.dto';
 import { UserRepository } from '../../../domain/repositories/user.repository';
 import { Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { IChangePassword } from 'src/domain/interfaces/auth/IChangePassword.interface';
 
-export class ChangePasswordUseCase {
+
+export class ChangePasswordUseCase implements IChangePassword {
   constructor(
     @Inject('UserRepository')
     private _userRepository: UserRepository

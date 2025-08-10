@@ -1,7 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { UrlRepository } from '../../../domain/repositories/url.repository';
+import { IGeturl } from 'src/domain/interfaces/url/IGet-url.interface';
 
-export class GetUrlUseCase {
+export class GetUrlUseCase implements IGeturl{
   constructor(@Inject('UrlRepository')
     private _urlRepository: UrlRepository) {}
 

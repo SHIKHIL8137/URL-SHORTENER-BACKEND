@@ -5,9 +5,10 @@ import { Inject } from '@nestjs/common';
 import { shortCodeGenerator } from 'src/domain/interfaces/generateUrl.interface';
 import { UrlEntitiy } from 'src/domain/entities/url.entitiy';
 import { UrlResponseDto } from 'src/domain/types/url.type';
+import { ICreate } from 'src/domain/interfaces/url/ICreate-url.interface';
 
 
-export class CreateUrlUseCase {
+export class CreateUrlUseCase implements ICreate{
   constructor(@Inject('UrlRepository')
     private _urlRepository: UrlRepository,
   @Inject('ShortCodeGenerator') private shortCodeGen: shortCodeGenerator

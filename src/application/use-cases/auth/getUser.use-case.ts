@@ -1,7 +1,8 @@
+import { IGetUser } from 'src/domain/interfaces/auth/IGetUser.interface';
 import { UserRepository } from '../../../domain/repositories/user.repository';
 import { Inject, NotFoundException } from '@nestjs/common';
 
-export class GetUserUseCase {
+export class GetUserUseCase implements IGetUser{
   constructor( @Inject('UserRepository') 
   private _userRepository: UserRepository) {}
 

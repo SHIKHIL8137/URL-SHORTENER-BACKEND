@@ -9,26 +9,35 @@ import {
   Response,
   Get,
   Patch,
+  Inject,
 } from '@nestjs/common';
-import { RegisterUseCase } from '../../application/use-cases/auth/register.use-case';
-import { LoginUseCase } from '../../application/use-cases/auth/login.use-case';
 import { RegisterUserDto } from '../../application/dto/register-user.dto';
 import { AuthGuard, VerifyRefresh } from './auth.guard';
-import { RefreshUseCase } from 'src/application/use-cases/auth/refresh.use-case';
-import { GetUserUseCase } from 'src/application/use-cases/auth/getUser.use-case';
 import { ChangePasswordDto } from 'src/application/dto/password.dto';
-import { ChangePasswordUseCase } from 'src/application/use-cases/auth/changePassword.usecase';
 import { RolesGuard } from './role.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { IChangePassword } from 'src/domain/interfaces/auth/IChangePassword.interface';
+import { IGetUser } from 'src/domain/interfaces/auth/IGetUser.interface';
+import { IRefresh } from 'src/domain/interfaces/auth/IRefresh.interface';
+import { ILogin } from 'src/domain/interfaces/auth/ILogin.interface';
+import { IRegister } from 'src/domain/interfaces/auth/IRegister.interface';
+import { statusCodes } from 'src/utils/statusCode';
+import { messages } from 'src/utils/statusMessage';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly _registerUseCase: RegisterUseCase,
-    private readonly _loginUseCase: LoginUseCase,
-    private readonly _refreshUseCase: RefreshUseCase,
-    private readonly _getUserUseCase: GetUserUseCase,
-    private readonly _changePassword: ChangePasswordUseCase
+    @Inject('IRegister')
+    private readonly _registerUseCase: IRegister,
+    @Inject('ILogin')
+    private readonly _loginUseCase: ILogin,
+    @Inject('IRefresh')
+    private readonly _refreshUseCase: IRefresh,
+    @Inject('IGetUser')
+    private readonly _getUserUseCase: IGetUser,
+    @Inject('IChangePassword')
+    private readonly _changePassword: IChangePassword,
   ) {}
 
   @Post('register')
@@ -36,8 +45,8 @@ export class AuthController {
   async register(@Body() dto: RegisterUserDto, @Response() res: any) {
     await this._registerUseCase.execute(dto);
     return res
-      .status(200)
-      .json({ message: 'User created successfull', status: true });
+      .status(statusCodes.SUCCESS)
+      .json({ message: messages.USER_CREATION_SUCCESS, status: true });
   }
 
   @Post('login')
@@ -57,7 +66,7 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     });
 
-    return res.status(200).json({ status: true, message: 'Login successful' });
+    return res.status(statusCodes.SUCCESS).json({ status: true, message: messages.LOGIN });
   }
 
   @Post('refresh')
@@ -71,14 +80,14 @@ export class AuthController {
       maxAge: 1000 * 60 * 15,
     });
 
-    return res.status(200).json({ message: 'Token refreshed' });
+    return res.status(statusCodes.SUCCESS).json({ message: messages.REFRESHED_TOKEN });
   }
 
   @Get('user')
   @UseGuards(AuthGuard)
   async getUser(@Request() req: any, @Response() res: any) {
     const user = await this._getUserUseCase.execute(req.user.email);
-    return res.status(200).json(user);
+    return res.status(statusCodes.SUCCESS).json(user);
   }
 
   @Get('logout')
@@ -96,17 +105,20 @@ export class AuthController {
       path: '/',
     });
 
-    return res.status(200).json({ status: true, message: 'Logout successful' });
+    return res.status(statusCodes.SUCCESS).json({ status: true, message: messages?.LOGOUT });
   }
 
   @Patch('resetpassword')
-  @UseGuards(AuthGuard,RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('user')
-  async resetPassword(@Body() dto:ChangePasswordDto,@Response() res:any,@Request() req: any){
-    console.log(dto)
-    console.log(req.user.email)
-    await this._changePassword.execute(dto,req.user.email)
-    return res.status(200).json({status:true,message:'Password Changed'});
+  async resetPassword(
+    @Body() dto: ChangePasswordDto,
+    @Response() res: any,
+    @Request() req: any,
+  ) {
+    console.log(dto);
+    console.log(req.user.email);
+    await this._changePassword.execute(dto, req.user.email);
+    return res.status(statusCodes.SUCCESS).json({ status: true, message: messages?.CHANGE_PASSWORD });
   }
 }
-
